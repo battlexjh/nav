@@ -64,13 +64,16 @@ export function getWebCount(websiteList) {
 }
 
 // 设置网站的面包屑类目显示
-let id = 0 // 为每个网站设置唯一ID
 export function setWeb(nav) {
+  let id = 0 // 为每个网站设置唯一ID
   if (!Array.isArray(nav)) return
 
   function removeIconFont(item) {
     delete item.collapsed
     delete item.id
+    if (!item.ownVisible) {
+      delete item.ownVisible
+    }
     item.icon ||= ''
     if (typeof item.icon === 'string' && item.icon.startsWith('icon')) {
       item.icon = ''
@@ -117,9 +120,12 @@ export function setWeb(nav) {
                 webItem.rate ??= 5
                 webItem.top ??= false
                 webItem.ownVisible ??= false
+                webItem.url ||= ''
                 webItem.name ||= ''
                 webItem.desc ||= ''
                 webItem.icon ||= ''
+                webItem.url = webItem.url.trim()
+                webItem.desc = webItem.desc.trim()
 
                 webItem.name = webItem.name.replace(/<b>|<\/b>/g, '')
                 webItem.desc = webItem.desc.replace(/<b>|<\/b>/g, '')
