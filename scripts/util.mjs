@@ -64,7 +64,7 @@ export function getWebCount(websiteList) {
 }
 
 // 设置网站的面包屑类目显示
-export function setWeb(nav) {
+export function setWeb(nav, settings) {
   let id = 0 // 为每个网站设置唯一ID
   if (!Array.isArray(nav)) return
 
@@ -82,7 +82,7 @@ export function setWeb(nav) {
 
   function formatDate(item) {
     item.createdAt ||= Date.now()
-    item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+    item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD HH:mm')
   }
 
   for (let i = 0; i < nav.length; i++) {
@@ -124,6 +124,7 @@ export function setWeb(nav) {
                 webItem.name ||= ''
                 webItem.desc ||= ''
                 webItem.icon ||= ''
+                webItem.icon = replaceJsdelivrCDN(webItem.icon, settings)
                 webItem.url = webItem.url.trim()
                 webItem.desc = webItem.desc.trim()
 
@@ -394,4 +395,16 @@ export async function spiderWeb(db, settings) {
     errorUrlCount,
     time: diff,
   }
+}
+
+export function replaceJsdelivrCDN(str = '', settings) {
+  const cdn = settings?.gitHubCDN
+  if (!cdn) {
+    return str
+  }
+  str = str.replace('cdn.jsdelivr.net', cdn)
+  str = str.replace('testingcf.jsdelivr.net', cdn)
+  str = str.replace('img.jsdmirror.com', cdn)
+  str = str.replace('gcore.jsdelivr.net', cdn)
+  return str
 }
