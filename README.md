@@ -66,9 +66,7 @@
 
 ## 预览
 
-- [https://nav3.cn/](https://nav3.cn/)
-- [https://faxian.vercel.app/](https://faxian.vercel.app/)
-- [https://xjh22222228.github.io/nav-web/](https://xjh22222228.github.io/nav-web/)
+- [https://nav3.cn](https://nav3.cn)
 
 ![Preview](https://gcore.jsdelivr.net/gh/xjh22222228/public@gh-pages/nav/preview.gif)
 
@@ -110,9 +108,7 @@
 
 #### 自有部署
 
-自有部署一直不是发现导航的需求目标，但陆续有人问，决定从`v8.8.0`版本开始支持！
-
-[成为我们的会员](https://gcore.jsdelivr.net/gh/xjh22222228/public@gh-pages/nav/support2.svg)
+自有部署一直不是发现导航的需求目标，但陆续接到需求，决定从`v8.8.0`版本开始支持！
 
 #### Fork vs 自有部署
 
@@ -124,9 +120,7 @@
 | 存活状态 | 未知             | 只要`GitHub`还在 |
 | 图片     | 走服务器带宽     | 免费 CDN 加速    |
 
-自有部署只有保存快，其他 `Fork` 完虐！
-
-如果是部署在公司内网可以用`自有部署`，其他强烈建议 `Fork` 模式。
+自有部署操作速度快，无需等待，成本较高，按需选择。
 
 ## 配置说明
 
@@ -140,6 +134,7 @@
 | | √| password | 自有部署登录密码，`Fork` 用户无需填写 |
 | | √| address | 自有部署, 一旦填写认为你是自有部署 |
 |√| √| email | 用户提交收录通知 |
+| | √| mailConfig | 自有部署，用户收录通知邮箱配置 |
 
 ## 后台
 
@@ -196,12 +191,14 @@ yarn build
 
 项目于 2018 年到至今一直坚持维护和开源, 经过 N 次的迭代与优化, 如果项目能帮到您是我的荣幸。
 
-您可以请作者喝杯咖啡，继续战斗下去（请备注 GitHub 名字）~
+您可以请作者喝杯咖啡，继续战斗下去
 
 <img src="https://gcore.jsdelivr.net/gh/xjh22222228/public@gh-pages/img/32.png" width="600">
 
-<img src="https://gcore.jsdelivr.net/gh/xjh22222228/public@gh-pages/nav/thank.png" width="200" />
+## LICENSE
 
-## License
+For commercial sites, themes, projects, and applications, keep your source code private/proprietary by purchasing a [Commercial License](https://official.nav3.cn/pricing).
 
-[MIT](./LICENSE)
+Licensed under the GNU General Public License 3.0 for compatible open source projects and non-commercial use.
+
+Copyright 2024-present xiejiahe

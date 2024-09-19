@@ -1,5 +1,5 @@
-// 开源项目MIT，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息，允许商业途径。
-// Copyright @ 2018-present xiejiahe. All rights reserved. MIT license.
+// 开源项目，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息。
+// Copyright @ 2018-present xiejiahe. All rights reserved.
 
 import config from '../../nav.config.json'
 import http, { httpNav } from '../utils/http'
@@ -14,6 +14,7 @@ import {
 } from 'src/store'
 import { ISettings } from 'src/types'
 import { isSelfDevelop } from 'src/utils/util'
+import { isLogin } from 'src/utils/user'
 
 const { gitRepoUrl } = config
 const s = gitRepoUrl.split('/')
@@ -131,6 +132,9 @@ export async function updateFileContent({
   isEncode = true,
 }: Iupdate) {
   if (isSelfDevelop) {
+    if (!isLogin) {
+      return
+    }
     return http
       .post('/api/contents/update', {
         path,
@@ -193,19 +197,35 @@ export async function createFile({
 }
 
 export async function getUserCollect(data?: Record<string, any>) {
+  if (isSelfDevelop) {
+    return http.post('/api/collect/get', data)
+  }
   return httpNav.post('/api/get', data)
 }
 
 export async function saveUserCollect(data?: Record<string, any>) {
+  if (isSelfDevelop) {
+    return http.post('/api/collect/save', data)
+  }
+
   return httpNav.post('/api/save', data)
 }
 
 export async function delUserCollect(data?: Record<string, any>) {
+  if (isSelfDevelop) {
+    return http.post('/api/collect/delete', data)
+  }
   return httpNav.post('/api/delete', data)
 }
 
 export async function getWebInfo(url: string) {
   try {
+    if (isSelfDevelop) {
+      const res = await http.post('/api/web/info', { url })
+      return {
+        ...res.data,
+      }
+    }
     const res = await httpNav.post('/api/icon', { url })
     return {
       ...res.data,

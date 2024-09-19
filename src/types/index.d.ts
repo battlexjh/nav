@@ -1,5 +1,5 @@
-// 开源项目MIT，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息，允许商业途径。
-// Copyright @ 2018-present xiejiahe. All rights reserved. MIT license.
+// 开源项目，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息。
+// Copyright @ 2018-present xiejiahe. All rights reserved.
 // See https://github.com/xjh22222228/nav
 
 export type ThemeType =
@@ -10,7 +10,7 @@ export type ThemeType =
   | 'App'
   | 'Shortcut'
 
-export type ICardType = 'standard' | 'column' | 'example' | 'common'
+export type ICardType = 'standard' | 'column' | 'example' | 'retro' | 'original'
 
 type OverType = 'overflow' | 'ellipsis'
 
@@ -31,6 +31,11 @@ export interface ITagProp {
   [tagName: string]: ITagPropValues
 }
 
+export interface IWebTag {
+  id: number | string
+  url?: string
+}
+
 export interface IWebProps {
   __name__?: string // 搜索原name值
   __desc__?: string
@@ -42,13 +47,11 @@ export interface IWebProps {
   createdAt: string | number
   rate?: number // 0-5
   top?: boolean
-  index?: number // sort
+  index?: number | string // sort
   ownVisible?: boolean
   breadcrumb: string[]
   ok?: boolean
-  urls?: {
-    [tagName: string]: string
-  }
+  tags?: IWebTag[]
   [key: string]: any
 }
 
@@ -145,7 +148,7 @@ export interface ISettings {
   shortcutThemeShowWeather: boolean
   shortcutTitle: string
   shortcutDockCount: number
-  shortDocTitle: string
+  shortcutDocTitle: string
 
   superTitle: string
   superOverType: OverType
@@ -155,7 +158,6 @@ export interface ISettings {
   superDocTitle: string
 
   showRate: boolean
-  mirrorList: Record<string, any>[]
 
   allowCollect: boolean
   email: string
@@ -167,8 +169,12 @@ export interface ISettings {
   spiderTimeout: number | string
 
   loadingCode: string
-
+  openSearch: boolean
   gitHubCDN: string
+
+  runtime: number
+
+  [key: string]: any
 }
 
 export type internalProps = {
@@ -180,5 +186,6 @@ declare global {
   const Swiper: any
   interface Window {
     __FINISHED__: boolean // 记录已取 web 数据
+    __TITLE__: string | undefined
   }
 }

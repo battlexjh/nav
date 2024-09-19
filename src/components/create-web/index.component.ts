@@ -1,12 +1,12 @@
-// 开源项目MIT，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息，允许商业途径。
-// Copyright @ 2018-present xiejiahe. All rights reserved. MIT license.
+// 开源项目，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息。
+// Copyright @ 2018-present xiejiahe. All rights reserved.
 // See https://github.com/xjh22222228/nav
 
 import { Component, Output, EventEmitter } from '@angular/core'
 import { queryString, getTextContent } from 'src/utils'
 import { setWebsiteList, updateByWeb } from 'src/utils/web'
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms'
-import { IWebProps } from 'src/types'
+import type { IWebProps, IWebTag } from 'src/types'
 import { NzMessageService } from 'ng-zorro-antd/message'
 import { saveUserCollect, getWebInfo } from 'src/api'
 import { $t } from 'src/locale'
@@ -92,17 +92,17 @@ export class CreateWebComponent {
     this.validateForm.get('ownVisible')!.setValue(detail?.ownVisible ?? false)
     this.validateForm.get('rate')!.setValue(detail?.rate ?? 5)
     if (detail) {
-      if (typeof detail.urls === 'object') {
-        for (let k in detail.urls) {
+      if (Array.isArray(detail.tags)) {
+        detail.tags.forEach((item: IWebTag) => {
           // @ts-ignore
           this.validateForm?.get('urlArr').push?.(
             this.fb.group({
-              id: Number(k),
-              name: tagMap[k]?.name ?? '',
-              url: detail.urls[k],
+              id: Number(item.id),
+              name: tagMap[item.id].name ?? '',
+              url: item.url || '',
             })
           )
-        }
+        })
       }
     }
   }
@@ -126,6 +126,10 @@ export class CreateWebComponent {
   }
 
   async onUrlBlur(e: any) {
+    if (!settings.openSearch) {
+      return
+    }
+
     let url = e.target?.value
     if (!url) {
       return
@@ -186,7 +190,7 @@ export class CreateWebComponent {
     }
 
     const createdAt = Date.now()
-    let urls: Record<string, any> = {}
+    const tags: IWebTag[] = []
     let { title, icon, url, top, ownVisible, rate, desc, index } =
       this.validateForm.value
 
@@ -196,7 +200,10 @@ export class CreateWebComponent {
     const urlArr = this.validateForm.get('urlArr')?.value || []
     urlArr.forEach((item: any) => {
       if (item.id) {
-        urls[item.id] = item.url
+        tags.push({
+          id: item.id,
+          url: item.url,
+        })
       }
     })
 
@@ -211,7 +218,7 @@ export class CreateWebComponent {
       ownVisible: ownVisible ?? false,
       icon,
       url,
-      urls,
+      tags,
     }
 
     if (this.detail) {
@@ -226,7 +233,7 @@ export class CreateWebComponent {
         const { page, id } = queryString()
         const oneIndex = this.oneIndex ?? page
         const twoIndex = this.twoIndex ?? id
-        const threeIndex = this.threeIndex as number
+        const threeIndex = this.threeIndex || 0
         const w = websiteList[oneIndex].nav[twoIndex].nav[threeIndex].nav
         this.uploading = true
         if (this.isLogin) {
@@ -241,8 +248,7 @@ export class CreateWebComponent {
           }
         } else if (this.settings.allowCollect) {
           try {
-            await saveUserCollect({
-              email: this.settings.email,
+            const params = {
               data: {
                 ...payload,
                 extra: {
@@ -253,7 +259,8 @@ export class CreateWebComponent {
                     websiteList[oneIndex].nav[twoIndex].nav[threeIndex].title,
                 },
               },
-            })
+            }
+            await saveUserCollect(params)
             this.message.success($t('_waitHandle'))
           } catch {}
         }

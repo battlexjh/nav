@@ -1,5 +1,5 @@
-// 开源项目MIT，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息，允许商业途径。
-// Copyright @ 2018-present xiejiahe. All rights reserved. MIT license.
+// 开源项目，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息。
+// Copyright @ 2018-present xiejiahe. All rights reserved.
 // See https://github.com/xjh22222228/nav
 
 import {
@@ -75,7 +75,7 @@ export class FixbarComponent {
     private activatedRoute: ActivatedRoute
   ) {
     if (this.isDark) {
-      document.documentElement.classList.add('dark-container')
+      document.documentElement.classList.add('dark-container', 'dark')
     }
 
     const url = this.router.url.split('?')[0]
@@ -89,6 +89,9 @@ export class FixbarComponent {
       })
       .filter((t) => {
         if (url === '/' && url + settings.theme?.toLowerCase?.() === t.url) {
+          return false
+        }
+        if (t.url === '/' && url === t.url + settings.theme?.toLowerCase?.()) {
           return false
         }
         return t.url !== url
@@ -139,6 +142,7 @@ export class FixbarComponent {
       String(Number(this.isDark))
     )
     document.documentElement.classList.toggle('dark-container')
+    document.documentElement.classList.toggle('dark')
 
     if (this.isDark) {
       this.removeBackground()

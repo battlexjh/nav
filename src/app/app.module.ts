@@ -1,5 +1,5 @@
-// 开源项目MIT，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息，允许商业途径。
-// Copyright @ 2018-present xiejiahe. All rights reserved. MIT license.
+// 开源项目，未经作者同意，不得以抄袭/复制代码/修改源代码版权信息。
+// Copyright @ 2018-present xiejiahe. All rights reserved.
 // See https://github.com/xjh22222228/nav
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
@@ -58,6 +58,7 @@ import { LogoComponent } from '../components/logo/logo.component'
 import { CardComponent } from '../components/card/index.component'
 import { MoveWebComponent } from '../components/move-web/index.component'
 import { WebMoreMenuComponent } from '../components/web-more-menu/index.component'
+import { TagListComponent } from '../components/tag-list/index.component'
 
 import LightComponent from '../view/light/index.component'
 import SuperComponent from '../view/super/index.component'
@@ -143,6 +144,7 @@ const icons: IconDefinition[] = [
     CardComponent,
     MoveWebComponent,
     WebMoreMenuComponent,
+    TagListComponent,
     SafeHtmlPipe,
   ],
   imports: [

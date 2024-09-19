@@ -1,21 +1,32 @@
-// Copyright @ 2018-present x.iejiahe. All rights reserved. MIT license.
+// Copyright @ 2018-present x.iejiahe. All rights reserved.
 // See https://github.com/xjh22222228/nav
 
 import fs from 'fs'
 import path from 'path'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc.js'
+import timezone from 'dayjs/plugin/timezone.js'
 import defaultDb from './db.mjs'
 import {
   TAG_ID1,
   TAG_ID2,
   TAG_ID3,
+  TAG_ID_NAME1,
+  TAG_ID_NAME2,
+  TAG_ID_NAME3,
   getWebCount,
   setWeb,
   replaceJsdelivrCDN,
 } from './util.mjs'
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Asia/Shanghai')
+
 const packagePath = path.join('.', 'package.json')
 const packageJson = JSON.parse(fs.readFileSync(packagePath).toString())
 const configJson = {
+  version: packageJson.version,
   gitRepoUrl: packageJson.gitRepoUrl,
   provider: packageJson.provider,
   branch: packageJson.branch,
@@ -23,6 +34,7 @@ const configJson = {
   address: packageJson.address,
   email: packageJson.email,
   port: packageJson.port,
+  datetime: dayjs.tz().format('YYYY-MM-DD HH:mm'),
 }
 fs.writeFileSync(path.join('.', 'nav.config.json'), JSON.stringify(configJson))
 
@@ -114,6 +126,10 @@ try {
 }
 
 {
+  const isEn = settings.language === 'en'
+  const desc = isEn
+    ? 'The system is built-in and cannot be deleted'
+    : '系统内置不可删除'
   if (!Array.isArray(tags)) {
     tags = []
   }
@@ -121,10 +137,10 @@ try {
   if (!a) {
     tags.push({
       id: TAG_ID1,
-      name: '中文',
+      name: isEn ? 'Chinese' : TAG_ID_NAME1,
       color: '#2db7f5',
       createdAt: '',
-      desc: '系统内置不可删除',
+      desc,
       isInner: true,
     })
   }
@@ -132,10 +148,10 @@ try {
   if (!b) {
     tags.push({
       id: TAG_ID2,
-      name: '英文',
+      name: isEn ? 'English' : TAG_ID_NAME2,
       color: '#f50',
       createdAt: '',
-      desc: '系统内置不可删除',
+      desc,
       isInner: true,
     })
   }
@@ -143,10 +159,10 @@ try {
   if (!c) {
     tags.push({
       id: TAG_ID3,
-      name: 'Github',
+      name: TAG_ID_NAME3,
       color: '#108ee9',
       createdAt: '',
-      desc: '系统内置不可删除',
+      desc,
       isInner: true,
     })
   }
@@ -168,21 +184,25 @@ try {
     'https://gcore.jsdelivr.net/gh/xjh22222228/public@gh-pages/nav/logo.svg'
   settings.language ||= 'zh-CN'
   settings.loading ??= 'random'
+  settings.runtime ??= dayjs.tz().valueOf()
   settings.allowCollect ??= true
   settings.email ||= configJson.email || ''
   settings.showGithub ??= true
   settings.showLanguage ??= true
   settings.showRate ??= true
+  settings.openSearch ??= true
   settings.title ??= '发现导航 - 精选实用导航网站'
   settings.description ??= '发现导航是一个轻量级免费且强大的导航网站'
   settings.keywords ??= '免费导航,开源导航'
   settings.theme ??= 'Light'
   settings.actionUrl ??= ''
   settings.appTheme ??= 'App'
-  settings.openSEO ??= true
+  settings.openSEO ??= !configJson.address
   settings.headerContent ??= ''
-  settings.footerContent ??=
-    '<div>共收录${total}个网站</div><div>Copyright © 2018-${year} ${hostname}, All Rights Reserved</div>'
+  settings.footerContent ??= `
+<div>共收录$\{total\}个网站</div>
+<div>Copyright © 2018-$\{year} $\{hostname}, All Rights Reserved</div>  
+`.trim()
   settings.showThemeToggle ??= true
 
   settings.lightDocTitle ||= ''
@@ -201,7 +221,7 @@ try {
   ]
   settings.simThemeDesc ??=
     '这里收录多达 <b>${total}</b> 个优质网站， 助您工作、学习和生活'
-  settings.simCardStyle ||= 'standard'
+  settings.simCardStyle ||= 'original'
   settings.simOverType ||= 'overflow'
   settings.simThemeHeight ??= 0
   settings.simThemeAutoplay ??= true
@@ -250,7 +270,7 @@ try {
     },
   ]
   settings.shortcutTitle ??= ''
-  settings.shortDocTitle ||= ''
+  settings.shortcutDocTitle ||= ''
   settings.shortcutDockCount ??= 6
   settings.shortcutThemeShowWeather ??= true
   settings.shortcutThemeImages ??= [
@@ -259,7 +279,6 @@ try {
       url: '',
     },
   ]
-  settings.mirrorList ||= []
   settings.checkUrl ??= false
   settings.spiderIcon ??= 'NO'
   settings.spiderDescription ??= 'NO'
@@ -269,7 +288,7 @@ try {
   settings.spiderTimeout = Number(settings.spiderTimeout) || 6
   settings.loadingCode ??= ''
 
-  settings.appCardStyle ??= 'common'
+  settings.appCardStyle ??= 'retro'
   settings.appDocTitle ||= ''
   settings.gitHubCDN ||= 'gcore.jsdelivr.net'
 
@@ -307,7 +326,5 @@ try {
 const { userViewCount, loginViewCount } = getWebCount(db)
 internal.userViewCount = userViewCount < 0 ? loginViewCount : userViewCount
 internal.loginViewCount = loginViewCount
-internal.buildTime = Date.now()
 fs.writeFileSync(internalPath, JSON.stringify(internal))
-
-fs.writeFileSync(dbPath, JSON.stringify(setWeb(db, settings)))
+fs.writeFileSync(dbPath, JSON.stringify(setWeb(db, settings, tags)))
